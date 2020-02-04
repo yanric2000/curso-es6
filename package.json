@@ -11,6 +11,5 @@
   },
   "scripts": {
     "dev": "babel ./main.js -o bundle.js -w",
-    "setup-git": "eval"
   }
 }
