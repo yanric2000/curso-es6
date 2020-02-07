@@ -9,3 +9,10 @@ export function sub(a, b){
 export function mult(a, b){
     return a * b;
 }
+
+export const idade = 23;
+export default class Usuario {
+    static info() {
+        console.log('Apenas teste');
+    }
+}
