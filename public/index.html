@@ -7,13 +7,39 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <title>Index</title>
+    <style>
+        ul{
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        li{
+            clear: both;
+            margin-top: 20px;
+        }
+        img{
+            float: left;
+            margin-right: 10px;
+            width: 80px;
+        }
+        strong{
+            font-size: 20px;
+        }
+        p{
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="centralizar">
-        <button id="addTodo" class="botao-roxo fonte" onclick=todoList.addTodo()>
-            Adicionar
-        </button>
+        <form id="repo-form">
+            <input type="text" name="repository">
+            <button type="submit"> Adicionar </button>
+        </form>
     </div>
+    <ul id="repo-list">
+    </ul>
     <!-- bundle.js é automaticamente adicionado -->
     <script src="bundle.js"></script>
 </body>

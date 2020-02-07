@@ -1,6 +1,7 @@
 const lista = [1, 2, 4, 5, 10];
 
 // Percorre o array passando o valor e o index
+// Retorna valores, forEach para apenas percorrer
 
 const novaLista = lista.map((item, index) => item + index);
 

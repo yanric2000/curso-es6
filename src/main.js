@@ -1,48 +1,89 @@
-import axios from 'axios';
+import api from './api';
 
-class Api {
-    static async getUserInfo(username) {
-        try {
-            const response = await axios.get(`https://api.github.com/users/${username}`)
-            console.log(response);
-        } catch (err) {
-            console.warn('Erro na api');
-        }
+class App {
+    constructor() {
+        this.repositories = [];
+        this.formEl = document.getElementById('repo-form');
+        this.listEl = document.getElementById('repo-list');
+        this.inputEl = document.querySelector('input[name=repository]');
+        this.registerHandler();
     }
 
-    static async getCepInfo(cep) {
-        try {
-            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-            console.log(response);
-        } catch (err) {
-            console.warn('Erro na api');
-        }
+    registerHandler() {
+        this.formEl.onsubmit = event => this.addRepository(event);
     }
 
-    static async requisicoes(){
+    async addRepository(event) {
+        event.preventDefault();
+
+        const repoName = this.inputEl.value;
+
+        if(repoName.length === 0)
+            return;
+
+        this.setLoading();
+
         try {
-            let [someResult, anotherResult] = await Promise.all([
-                axios.get(`https://viacep.com.br/ws/88350201/json/`),
-                axios.get(`https://api.github.com/users/yanric2000`)
-            ]);
-            const response = [someResult, anotherResult]; 
-            console.log(response);
-        } catch (err) {
-            console.warn('Erro na api');
+            const response = await api.get(`/repos/${repoName}`);
+            const { name, description, html_url, owner: { avatar_url } } = response.data;
+
+            this.repositories.push({
+                name,
+                description,
+                avatar_url,
+                html_url
+            });
+    
+            this.inputEl.value = '';
+    
+            this.render();
+
+        } catch (error) {
+            alert('O repositório não existe.');
+        }
+
+        this.setLoading(false);
+    }
+
+    render(data){
+        this.listEl.innerHTML = '';
+
+        this.repositories.forEach(repo => {
+            let imgEl = document.createElement('img');
+            imgEl.setAttribute('src', repo.avatar_url);
+
+            let titleEl = document.createElement('strong');
+            titleEl.innerText = repo.name;
+
+            let descriptionEl = document.createElement('p');
+            descriptionEl.innerText = repo.description;
+
+            let urlEl = document.createElement('a');
+            urlEl.setAttribute('href', repo.html_url);
+            urlEl.setAttribute('target', '_blank');
+            urlEl.innerText = 'Acessar';
+
+            let listItemEl = document.createElement('li');
+            listItemEl.appendChild(imgEl);
+            listItemEl.appendChild(titleEl);
+            listItemEl.appendChild(descriptionEl);
+            listItemEl.appendChild(urlEl);
+
+            this.listEl.appendChild(listItemEl);
+        });
+    }
+
+    setLoading(loading = true){
+        if(loading === true){
+            let loadingEl = document.createElement('span');
+            loadingEl.appendChild(document.createTextNode('Carregando...'));
+            loadingEl.setAttribute('id', 'loading');
+            
+            this.formEl.appendChild(loadingEl);
+        }else{
+            document.getElementById('loading').remove();
         }
     }
 }
 
-//Api.getCepInfo(88350201);
-
-const delay = () => new Promise( (resolve, reject) => {
-    setTimeout( () => { resolve('segundos') }, 1000 );
-});
-
-async function contarSegundos(segundos){
-    for (let index = 0; index < segundos; index++) {
-        console.log(`${index+1} ${await delay()}`);
-    }
-}
-
-//contarSegundos(8);
+new App();
